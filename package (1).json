@@ -1,10 +1,10 @@
 {
   "name": "sms-backend",
   "version": "1.0.0",
-  "main": "src/app.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+    "dev": "nodemon app.js",
+    "start": "node app.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
