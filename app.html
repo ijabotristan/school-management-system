@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rollcall — School Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --ink-soft:#2A3C63;
+    --paper:#ECEDE7; --paper-raised:#F7F7F2;
+    --line:#C9CBB9;
+    --accent:#D9A62E; --accent-dark:#B4841B;
+    --good:#3E7D5C; --good-bg:#E3EEE7;
+    --bad:#B84C3E; --bad-bg:#F4E4E1;
+    --warn:#B4841B; --warn-bg:#F3E9D2;
+    --text:#1B2A4A; --text-soft:#5B6478;
+    --radius:10px;
+    --display:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:var(--body);background:var(--paper);color:var(--text);}
+  a{color:inherit;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:6px;border:none;font-family:var(--body);font-weight:600;font-size:14px;cursor:pointer;transition:transform .08s ease;text-decoration:none;}
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--accent);color:var(--ink);}
+  .btn-primary:hover{background:var(--accent-dark);color:#fff;}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.35);}
+  .btn-ghost:hover{border-color:#fff;}
+  .btn-dark{background:var(--ink);color:#fff;width:100%;}
+  .btn-dark:hover{background:var(--ink-soft);}
+  .btn-outline{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
+  .btn-outline:hover{border-color:var(--ink);}
+
+  /* ================= SCREEN SWITCHING ================= */
+  .screen{display:none;}
+  #screen-home{display:block;}
+
+  /* ================= HOME ================= */
+  .nav{position:sticky;top:0;z-index:20;background:var(--ink);color:#fff;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+  .nav .logo{font-family:var(--display);font-weight:700;font-size:19px;display:flex;align-items:center;gap:8px;}
+  .nav .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);}
+  .nav .actions{display:flex;gap:10px;}
+
+  .hero{background:var(--ink);color:#fff;padding:80px 40px 90px;text-align:center;}
+  .hero .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+  .hero h1{font-family:var(--display);font-size:clamp(32px,5vw,54px);line-height:1.08;font-weight:700;max-width:760px;margin:0 auto 18px;}
+  .hero p{font-size:16px;color:rgba(255,255,255,0.72);max-width:520px;margin:0 auto 32px;line-height:1.6;}
+  .hero .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+  .ledger-strip{background:var(--ink-soft);border-top:1px dashed rgba(255,255,255,0.15);padding:18px 40px;display:flex;gap:36px;justify-content:center;flex-wrap:wrap;}
+  .ledger-strip .item{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.65);display:flex;gap:8px;align-items:center;}
+  .ledger-strip .item b{color:var(--accent);font-size:14px;}
+
+  /* -------- slides -------- */
+  .slides-section{padding:70px 40px 90px;max-width:1040px;margin:0 auto;}
+  .slides-head{text-align:center;margin-bottom:40px;}
+  .slides-head .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:10px;}
+  .slides-head h2{font-family:var(--display);font-size:30px;margin:0 0 10px;font-weight:700;}
+  .slides-head p{color:var(--text-soft);font-size:15px;max-width:460px;margin:0 auto;}
+
+  .slider{position:relative;background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 20px 40px rgba(27,42,74,0.10);}
+  .slide-track{display:flex;transition:transform .45s cubic-bezier(.65,0,.35,1);}
+  .slide{min-width:100%;display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:center;}
+  @media(max-width:760px){.slide{grid-template-columns:1fr;}}
+  .slide-copy{padding:44px 42px;}
+  .slide-copy .role-tag{display:inline-block;padding:5px 12px;border-radius:20px;background:var(--warn-bg);color:var(--accent-dark);font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
+  .slide-copy h3{font-family:var(--display);font-size:24px;margin:0 0 12px;font-weight:600;}
+  .slide-copy p{color:var(--text-soft);font-size:14px;line-height:1.65;margin:0 0 18px;}
+  .slide-copy ul{margin:0;padding:0;list-style:none;}
+  .slide-copy li{font-size:13px;color:var(--text);padding:6px 0 6px 20px;position:relative;}
+  .slide-copy li:before{content:'—';position:absolute;left:0;color:var(--accent-dark);font-family:var(--mono);}
+  .slide-visual{background:var(--paper);padding:36px;height:100%;display:flex;align-items:center;justify-content:center;border-left:1px dashed var(--line);}
+  @media(max-width:760px){.slide-visual{border-left:none;border-top:1px dashed var(--line);}}
+
+  .mock-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:16px;width:100%;max-width:280px;box-shadow:0 10px 24px rgba(27,42,74,0.08);}
+  .mock-title{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-bottom:12px;}
+  .mock-stat-row{display:flex;gap:8px;margin-bottom:8px;}
+  .mock-stat{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:9px;}
+  .mock-stat .n{font-family:var(--mono);font-weight:600;font-size:16px;color:var(--ink);}
+  .mock-stat .l{font-size:9px;color:var(--text-soft);text-transform:uppercase;}
+  .mock-roll-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px;}
+  .mock-roll-row:last-child{border-bottom:none;}
+  .mock-dot{width:20px;height:20px;border-radius:50%;font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .mock-dot.p{background:var(--good);color:#fff;}
+  .mock-dot.a{background:var(--bad);color:#fff;}
+  .mock-dot.l{background:var(--warn);color:#fff;}
+  .mock-table-row{display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:1px solid var(--line);}
+  .mock-table-row:last-child{border-bottom:none;}
+  .mock-table-row .score{font-family:var(--mono);font-weight:600;}
+  .mock-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--mono);text-transform:uppercase;background:var(--good-bg);color:var(--good);}
+
+  .slide-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:20px 0 0;}
+  .slide-arrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--paper-raised);cursor:pointer;font-size:16px;color:var(--ink);display:flex;align-items:center;justify-content:center;}
+  .slide-arrow:hover{border-color:var(--accent);color:var(--accent-dark);}
+  .slide-dots{display:flex;gap:8px;}
+  .slide-dot{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;border:none;padding:0;}
+  .slide-dot.active{background:var(--accent-dark);width:22px;border-radius:5px;}
+
+  .cta-band{background:var(--paper-raised);border-top:1px solid var(--line);padding:60px 40px;text-align:center;}
+  .cta-band h2{font-family:var(--display);font-size:26px;margin:0 0 10px;}
+  .cta-band p{color:var(--text-soft);font-size:14px;margin:0 0 24px;}
+  .footer{padding:24px 40px;text-align:center;font-size:12px;color:var(--text-soft);border-top:1px solid var(--line);font-family:var(--mono);}
+
+  /* ================= LOGIN / SIGNUP ================= */
+  .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 16px;background:linear-gradient(180deg, var(--ink) 0%, var(--ink) 220px, var(--paper) 220px);}
+  .auth-card{width:100%;max-width:440px;background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 24px 48px rgba(27,42,74,0.25);}
+  .auth-head{background:var(--ink);color:#fff;padding:24px 28px 20px;display:flex;align-items:center;justify-content:space-between;}
+  .auth-head .back{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;}
+  .auth-head .back:hover{color:#fff;}
+  .auth-head .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px;}
+  .auth-head h1{font-family:var(--display);font-size:22px;margin:0;font-weight:600;}
+  .auth-body{padding:24px 28px 28px;}
+  .field{margin-bottom:15px;}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--text-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+  .field select,.field input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--body);font-size:14px;background:#fff;color:var(--text);}
+  .field select:focus,.field input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+  .field .slug-preview{font-family:var(--mono);font-size:11px;color:var(--text-soft);margin-top:5px;}
+  .auth-error{background:var(--bad-bg);color:var(--bad);padding:10px 12px;border-radius:6px;font-size:13px;margin-bottom:16px;display:none;}
+  .auth-success{background:var(--good-bg);color:var(--good);padding:10px 12px;border-radius:6px;font-size:13px;margin-bottom:16px;display:none;}
+  .switcher{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);text-align:center;font-size:13px;color:var(--text-soft);}
+  .switcher a{color:var(--accent-dark);font-weight:600;cursor:pointer;text-decoration:none;}
+  .switcher a:hover{text-decoration:underline;}
+  .hint{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);}
+  .hint p{font-size:11px;color:var(--text-soft);margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
+  .hint-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--text-soft);padding:3px 0;}
+  .quick-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;}
+  .quick-btn{padding:8px 4px;border-radius:6px;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:600;cursor:pointer;color:var(--ink);font-family:var(--body);}
+  .quick-btn:hover{border-color:var(--accent);color:var(--accent-dark);}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+  /* ================= APP SHELL (unchanged from working demo) ================= */
+  .shell{min-height:100vh;}
+  .shell.active{display:flex;}
+  .sidebar{width:240px;background:var(--ink);color:#fff;display:flex;flex-direction:column;flex-shrink:0;}
+  .sidebar-head{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.12);}
+  .sidebar-head .school{font-family:var(--display);font-weight:600;font-size:17px;}
+  .sidebar-head .slug{font-family:var(--mono);font-size:11px;color:var(--accent);margin-top:2px;}
+  .role-badge{display:inline-block;margin-top:12px;padding:4px 10px;border-radius:20px;background:rgba(217,166,46,0.16);color:var(--accent);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);}
+  .nav-items{flex:1;padding:14px 10px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:7px;color:rgba(255,255,255,0.7);font-size:13px;font-weight:500;cursor:pointer;margin-bottom:2px;}
+  .nav-item:hover{background:rgba(255,255,255,0.06);color:#fff;}
+  .nav-item.active{background:var(--accent);color:var(--ink);font-weight:600;}
+  .sidebar-foot{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.12);}
+  .user-name{font-size:13px;font-weight:600;}
+  .logout{font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;margin-top:4px;}
+  .logout:hover{color:#fff;}
+  .main{flex:1;overflow-y:auto;}
+  .topbar{padding:24px 32px;border-bottom:1px solid var(--line);background:var(--paper-raised);display:flex;align-items:center;justify-content:space-between;}
+  .topbar h2{font-family:var(--display);font-size:22px;margin:0;font-weight:600;}
+  .topbar .sub{font-size:13px;color:var(--text-soft);margin-top:2px;}
+  .content{padding:28px 32px 60px;}
+  .grid{display:grid;gap:16px;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:900px){.grid-3{grid-template-columns:1fr;}}
+  .stat-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;}
+  .stat-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);font-weight:600;}
+  .stat-card .value{font-family:var(--mono);font-size:28px;font-weight:600;margin-top:6px;}
+  .stat-card .value.good{color:var(--good);}
+  .stat-card .value.bad{color:var(--bad);}
+  .stat-card .value.warn{color:var(--warn);}
+  .panel{background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;}
+  .panel-head{padding:16px 20px;border-bottom:1px dashed var(--line);display:flex;align-items:center;justify-content:space-between;}
+  .panel-head h3{font-family:var(--display);font-size:16px;margin:0;font-weight:600;}
+  .panel-body{padding:18px 20px;}
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-soft);font-weight:600;padding:0 10px 10px;border-bottom:1px solid var(--line);}
+  td{padding:10px;font-size:13px;border-bottom:1px solid var(--line);}
+  td.mono,th.mono{font-family:var(--mono);}
+  tr:last-child td{border-bottom:none;}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;font-family:var(--mono);text-transform:uppercase;}
+  .badge.present,.badge.paid{background:var(--good-bg);color:var(--good);}
+  .badge.absent,.badge.unpaid{background:var(--bad-bg);color:var(--bad);}
+  .badge.late,.badge.partial{background:var(--warn-bg);color:var(--warn);}
+  .badge.excused{background:#E5E7EE;color:var(--text-soft);}
+  .class-picker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .class-chip{padding:8px 16px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--body);}
+  .class-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .roll-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);}
+  .roll-row:last-child{border-bottom:none;}
+  .roll-name{font-size:14px;font-weight:500;}
+  .roll-status{display:flex;gap:6px;}
+  .roll-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:600;color:var(--text-soft);}
+  .roll-btn.p.on{background:var(--good);border-color:var(--good);color:#fff;}
+  .roll-btn.a.on{background:var(--bad);border-color:var(--bad);color:#fff;}
+  .roll-btn.l.on{background:var(--warn);border-color:var(--warn);color:#fff;}
+  .btn-save{background:var(--accent);color:var(--ink);font-weight:700;}
+  .btn-save:hover{background:var(--accent-dark);color:#fff;}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:13px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 12px 24px rgba(0,0,0,0.25);display:none;font-family:var(--body);z-index:50;}
+  .toast.show{display:flex;align-items:center;gap:8px;}
+  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);}
+  .mini-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mini-form input,.mini-form select{padding:9px 10px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:var(--body);}
+  .mini-form .full{grid-column:1 / -1;}
+  .child-tabs{display:flex;gap:8px;margin-bottom:18px;}
+  .child-tab{padding:9px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;cursor:pointer;}
+  .child-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .empty{padding:24px;text-align:center;color:var(--text-soft);font-size:13px;}
+</style>
+</head>
+<body>
+
+<!-- ===================== HOME ===================== -->
+<div class="screen" id="screen-home">
+  <div class="nav">
+    <div class="logo"><span class="dot"></span> Rollcall</div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="showScreen('login')">Log in</button>
+      <button class="btn btn-primary" onclick="showScreen('signup')">Register your school</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <p class="eyebrow">School Management System</p>
+    <h1>Run the whole school from one shared register.</h1>
+    <p>Admins, teachers, students, and parents each get exactly the view they need — attendance, marks, fees, and announcements, all in one place, all in sync.</p>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="showScreen('signup')">Register your school — free</button>
+      <button class="btn btn-ghost" onclick="showScreen('login')">I already have an account</button>
+    </div>
+  </div>
+  <div class="ledger-strip">
+    <div class="item"><b>4</b> roles, one login system</div>
+    <div class="item"><b>1</b> record entered, everyone sees it instantly</div>
+    <div class="item"><b>0</b> spreadsheets after this</div>
+  </div>
+
+  <div class="slides-section">
+    <div class="slides-head">
+      <p class="eyebrow">See it from every seat</p>
+      <h2>Everyone opens the same book, different page</h2>
+      <p>Swipe through what each role actually sees when they log in.</p>
+    </div>
+
+    <div class="slider">
+      <div class="slide-track" id="slideTrack">
+        <!-- Slide 1: Admin -->
+        <div class="slide">
+          <div class="slide-copy">
+            <span class="role-tag">Admin</span>
+            <h3>Set up the school once, run it all year.</h3>
+            <p>Enroll students, add teachers, assign classes and subjects, and track who's paid — from one dashboard.</p>
+            <ul>
+              <li>Add students &amp; teachers in seconds</li>
+              <li>Assign teachers to classes and subjects</li>
+              <li>See fee status across the whole school</li>
+            </ul>
+          </div>
+          <div class="slide-visual">
+            <div class="mock-card">
+              <div class="mock-title">School Overview</div>
+              <div class="mock-stat-row">
+                <div class="mock-stat"><div class="n">312</div><div class="l">Students</div></div>
+                <div class="mock-stat"><div class="n">24</div><div class="l">Teachers</div></div>
+                <div class="mock-stat"><div class="n">7</div><div class="l">Fees due</div></div>
+              </div>
+              <div class="mock-title" style="margin-top:14px;">Recent</div>
+              <div class="mock-table-row"><span>New student enrolled</span><span class="score">S3 A</span></div>
+              <div class="mock-table-row"><span>Fee payment recorded</span><span class="score">150,000</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Teacher -->
+        <div class="slide">
+          <div class="slide-copy">
+            <span class="role-tag">Teacher</span>
+            <h3>Pick your class, take the roll, done.</h3>
+            <p>Log in, choose today's class from your assigned list, and mark attendance in seconds — no paper register needed.</p>
+            <ul>
+              <li>See only the classes assigned to you</li>
+              <li>Mark present, late, or absent per student</li>
+              <li>Enter marks and post announcements</li>
+            </ul>
+          </div>
+          <div class="slide-visual">
+            <div class="mock-card">
+              <div class="mock-title">S3 A · Roll — Today</div>
+              <div class="mock-roll-row"><span>John Mugisha</span><span class="mock-dot p">P</span></div>
+              <div class="mock-roll-row"><span>Amara Keza</span><span class="mock-dot l">L</span></div>
+              <div class="mock-roll-row"><span>Eric Niyonzima</span><span class="mock-dot p">P</span></div>
+              <div class="mock-roll-row"><span>Divine Iradukunda</span><span class="mock-dot a">A</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Student -->
+        <div class="slide">
+          <div class="slide-copy">
+            <span class="role-tag">Student</span>
+            <h3>Everything in one login — no more asking around.</h3>
+            <p>Timetable, attendance, marks, assignments, and school announcements, always up to date the moment a teacher enters them.</p>
+            <ul>
+              <li>Check marks as soon as they're posted</li>
+              <li>Never miss an assignment deadline</li>
+              <li>See your own attendance history</li>
+            </ul>
+          </div>
+          <div class="slide-visual">
+            <div class="mock-card">
+              <div class="mock-title">Mid Term 1 Results</div>
+              <div class="mock-table-row"><span>Mathematics</span><span class="score">85/100</span></div>
+              <div class="mock-table-row"><span>English</span><span class="score">72/100</span></div>
+              <div class="mock-table-row"><span>Physics</span><span class="score">91/100</span></div>
+              <div class="mock-title" style="margin-top:14px;">Attendance</div>
+              <span class="mock-badge">96% present</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4: Parent -->
+        <div class="slide">
+          <div class="slide-copy">
+            <span class="role-tag">Parent</span>
+            <h3>Know how your child is doing, without a phone call.</h3>
+            <p>See attendance, results, and fee balances for each of your children, and get notified when the school posts something new.</p>
+            <ul>
+              <li>Track attendance and results per child</li>
+              <li>See exactly what's owed and what's paid</li>
+              <li>Get school-wide and class announcements</li>
+            </ul>
+          </div>
+          <div class="slide-visual">
+            <div class="mock-card">
+              <div class="mock-title">John Mugisha · S3 A</div>
+              <div class="mock-table-row"><span>Term 2 fees</span><span class="mock-badge">Paid</span></div>
+              <div class="mock-table-row"><span>Attendance</span><span class="score">96%</span></div>
+              <div class="mock-table-row"><span>Average score</span><span class="score">83</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-nav">
+      <button class="slide-arrow" onclick="moveSlide(-1)">‹</button>
+      <div class="slide-dots" id="slideDots"></div>
+      <button class="slide-arrow" onclick="moveSlide(1)">›</button>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <h2>Ready to put your school on one system?</h2>
+    <p>Takes about two minutes to set up. No credit card, this is a demo.</p>
+    <button class="btn btn-primary" onclick="showScreen('signup')">Register your school</button>
+  </div>
+  <div class="footer">ROLLCALL · SCHOOL MANAGEMENT SYSTEM · DEMO BUILD</div>
+</div>
+
+<!-- ===================== LOGIN ===================== -->
+<div class="screen" id="screen-login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-head">
+        <div>
+          <p class="tag">Log in</p>
+          <h1 id="schoolLabel">Greenhill Academy</h1>
+        </div>
+        <div class="back" onclick="showScreen('home')">← Home</div>
+      </div>
+      <div class="auth-body">
+        <div class="auth-error" id="loginError"></div>
+        <div class="field">
+          <label for="schoolSlug">School</label>
+          <select id="schoolSlug" onchange="onSchoolChange()"></select>
+        </div>
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="text" placeholder="you@school.rw">
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-dark" onclick="attemptLogin()">Log in</button>
+
+        <div class="switcher">New school? <a onclick="showScreen('signup')">Register it here</a></div>
+
+        <div class="hint">
+          <p>Demo accounts for this school</p>
+          <div id="hintList"></div>
+          <div class="quick-row" id="quickRow"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SIGNUP ===================== -->
+<div class="screen" id="screen-signup">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-head">
+        <div>
+          <p class="tag">Register</p>
+          <h1>Set up your school</h1>
+        </div>
+        <div class="back" onclick="showScreen('home')">← Home</div>
+      </div>
+      <div class="auth-body">
+        <div class="auth-error" id="signupError"></div>
+        <div class="auth-success" id="signupSuccess"></div>
+
+        <div class="field">
+          <label for="suSchoolName">School name</label>
+          <input id="suSchoolName" type="text" placeholder="e.g. Sunrise Secondary School" oninput="updateSlugPreview()">
+          <div class="slug-preview" id="slugPreview">your-school.sms.rw</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="suAdminName">Your name</label>
+            <input id="suAdminName" type="text" placeholder="Full name">
+          </div>
+          <div class="field">
+            <label for="suAdminEmail">Your email</label>
+            <input id="suAdminEmail" type="text" placeholder="admin@yourschool.rw">
+          </div>
+        </div>
+        <div class="field">
+          <label for="suAdminPassword">Password</label>
+          <input id="suAdminPassword" type="password" placeholder="Create a password">
+        </div>
+        <button class="btn btn-dark" onclick="registerSchool()">Create school &amp; continue</button>
+
+        <div class="switcher">Already registered? <a onclick="showScreen('login')">Log in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== APP SHELL ===================== -->
+<div class="screen shell" id="screen-app">
+  <div class="sidebar">
+    <div class="sidebar-head">
+      <div class="school" id="sbSchool">Greenhill Academy</div>
+      <div class="slug" id="sbSlug">greenhill.sms.rw</div>
+      <div class="role-badge" id="sbRole">Admin</div>
+    </div>
+    <div class="nav-items" id="navItems"></div>
+    <div class="sidebar-foot">
+      <div class="user-name" id="sbUser">—</div>
+      <div class="logout" onclick="logout()">Log out</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h2 id="viewTitle">Dashboard</h2>
+        <div class="sub" id="viewSub"></div>
+      </div>
+    </div>
+    <div class="content" id="viewContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg"></span></div>
+
+<script>
+/* =====================================================================
+   MOCK DATA — mirrors the real Postgres schema (schools/users/classes/
+   students/...) so this is a drop-in swap for real fetch() calls later.
+===================================================================== */
+let DB = {
+  schools: {
+    greenhill: {
+      name: "Greenhill Academy",
+      classes: [{ id: "c1", name: "S3 A" }, { id: "c2", name: "S3 B" }],
+      subjects: [{ id: "sub1", name: "Mathematics" }, { id: "sub2", name: "English" }, { id: "sub3", name: "Physics" }],
+      users: {
+        "admin@greenhill.rw": { password: "admin123", role: "admin", fullName: "Aline Uwase" },
+        "teacher@greenhill.rw": { password: "teach123", role: "teacher", fullName: "Mr. Eric Habimana",
+          classes: [{ classId: "c1", subjectId: "sub1" }, { classId: "c2", subjectId: "sub1" }] },
+        "john@greenhill.rw": { password: "student123", role: "student", fullName: "John Mugisha",
+          classId: "c1", studentId: "st1", parentEmail: "parent@greenhill.rw" },
+        "amara@greenhill.rw": { password: "student123", role: "student", fullName: "Amara Keza",
+          classId: "c1", studentId: "st2", parentEmail: null },
+        "parent@greenhill.rw": { password: "parent123", role: "parent", fullName: "Mrs. Grace Mugisha",
+          children: ["st1"] },
+      },
+      students: {
+        st1: { name: "John Mugisha", classId: "c1", admissionNo: "GH-2024-014" },
+        st2: { name: "Amara Keza", classId: "c1", admissionNo: "GH-2024-019" },
+      },
+      attendance: {
+        st1: [{ date: "2026-08-19", status: "present" }, { date: "2026-08-20", status: "present" }, { date: "2026-08-21", status: "late" }, { date: "2026-08-22", status: "present" }],
+        st2: [{ date: "2026-08-19", status: "present" }, { date: "2026-08-20", status: "absent" }, { date: "2026-08-21", status: "present" }, { date: "2026-08-22", status: "present" }],
+      },
+      marks: {
+        st1: [{ exam: "Mid Term 1", subject: "Mathematics", score: 85, max: 100 }, { exam: "Mid Term 1", subject: "English", score: 72, max: 100 }, { exam: "Mid Term 1", subject: "Physics", score: 91, max: 100 }],
+        st2: [{ exam: "Mid Term 1", subject: "Mathematics", score: 64, max: 100 }, { exam: "Mid Term 1", subject: "English", score: 78, max: 100 }],
+      },
+      fees: {
+        st1: { term: "Term 2", due: 150000, paid: 150000, status: "paid" },
+        st2: { term: "Term 2", due: 150000, paid: 60000, status: "partial" },
+      },
+      assignments: [
+        { classId: "c1", title: "Algebra Worksheet 4", subject: "Mathematics", due: "2026-08-28" },
+        { classId: "c1", title: "Essay: My Community", subject: "English", due: "2026-08-30" },
+      ],
+      announcements: [
+        { classId: null, title: "Term 2 ends Sept 12", body: "All fees must be cleared before the term ends.", date: "2026-08-20" },
+        { classId: "c1", title: "S3 A field trip", body: "Science museum visit next Friday — bring signed forms.", date: "2026-08-21" },
+      ],
+    },
+    kigalihigh: {
+      name: "Kigali Heights College",
+      classes: [{ id: "c9", name: "P6 Blue" }],
+      subjects: [{ id: "sub9", name: "Science" }],
+      users: { "admin@kigalihigh.rw": { password: "admin123", role: "admin", fullName: "Patrick Nkurunziza" } },
+      students: {}, attendance: {}, marks: {}, fees: {}, assignments: [],
+      announcements: [{ classId: null, title: "Welcome to the term", body: "Classes begin Monday.", date: "2026-08-18" }],
+    },
+  },
+};
+
+let state = { schoolSlug: "greenhill", email: null, user: null };
+
+/* ---------------- SCREEN SWITCHING ---------------- */
+function showScreen(name){
+  document.getElementById('screen-home').style.display = name === 'home' ? 'block' : 'none';
+  document.getElementById('screen-login').style.display = name === 'login' ? 'flex' : 'none';
+  document.getElementById('screen-signup').style.display = name === 'signup' ? 'flex' : 'none';
+  document.getElementById('screen-app').style.display = name === 'app' ? 'flex' : 'none';
+  if(name === 'login'){ populateSchoolOptions(); onSchoolChange(); }
+  window.scrollTo(0,0);
+}
+
+/* ---------------- SLIDES ---------------- */
+let slideIndex = 0;
+const slideCount = 4;
+let slideTimer = null;
+function renderDots(){
+  const wrap = document.getElementById('slideDots');
+  wrap.innerHTML = '';
+  for(let i=0;i<slideCount;i++){
+    const d = document.createElement('button');
+    d.className = 'slide-dot' + (i===slideIndex?' active':'');
+    d.onclick = () => { slideIndex = i; updateSlide(); resetSlideTimer(); };
+    wrap.appendChild(d);
+  }
+}
+function updateSlide(){
+  document.getElementById('slideTrack').style.transform = `translateX(-${slideIndex*100}%)`;
+  renderDots();
+}
+function moveSlide(dir){
+  slideIndex = (slideIndex + dir + slideCount) % slideCount;
+  updateSlide();
+  resetSlideTimer();
+}
+function resetSlideTimer(){
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => { slideIndex = (slideIndex+1) % slideCount; updateSlide(); }, 5000);
+}
+renderDots();
+resetSlideTimer();
+
+/* ---------------- LOGIN ---------------- */
+function populateSchoolOptions(){
+  const sel = document.getElementById('schoolSlug');
+  const prev = sel.value || state.schoolSlug;
+  sel.innerHTML = Object.entries(DB.schools).map(([slug,s]) => `<option value="${slug}">${s.name} (${slug})</option>`).join('');
+  sel.value = DB.schools[prev] ? prev : Object.keys(DB.schools)[0];
+  state.schoolSlug = sel.value;
+}
+function onSchoolChange(){
+  state.schoolSlug = document.getElementById('schoolSlug').value;
+  const school = DB.schools[state.schoolSlug];
+  document.getElementById('schoolLabel').textContent = school.name;
+  renderHints();
+}
+function renderHints(){
+  const school = DB.schools[state.schoolSlug];
+  const hintList = document.getElementById('hintList');
+  const quickRow = document.getElementById('quickRow');
+  hintList.innerHTML = ''; quickRow.innerHTML = '';
+  Object.entries(school.users).forEach(([email, u]) => {
+    const row = document.createElement('div');
+    row.className = 'hint-row';
+    row.innerHTML = `<span>${u.role}</span><span>${email}</span>`;
+    hintList.appendChild(row);
+    const btn = document.createElement('button');
+    btn.className = 'quick-btn';
+    btn.textContent = u.role;
+    btn.onclick = () => { document.getElementById('loginEmail').value = email; document.getElementById('loginPassword').value = u.password; attemptLogin(); };
+    quickRow.appendChild(btn);
+  });
+}
+function attemptLogin(){
+  const school = DB.schools[state.schoolSlug];
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errBox = document.getElementById('loginError');
+  const u = school.users[email];
+  if(!u || u.password !== password){
+    errBox.textContent = 'Invalid email or password for this school.';
+    errBox.style.display = 'block';
+    return;
+  }
+  errBox.style.display = 'none';
+  state.email = email; state.user = u;
+  enterApp();
+}
+function logout(){
+  state = { schoolSlug: state.schoolSlug, email: null, user: null };
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  showScreen('home');
+}
+
+/* ---------------- SIGNUP ---------------- */
+function slugify(str){
+  return str.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,30) || 'your-school';
+}
+function updateSlugPreview(){
+  const name = document.getElementById('suSchoolName').value;
+  document.getElementById('slugPreview').textContent = slugify(name) + '.sms.rw';
+}
+function registerSchool(){
+  const errBox = document.getElementById('signupError');
+  const okBox = document.getElementById('signupSuccess');
+  errBox.style.display = 'none'; okBox.style.display = 'none';
+
+  const schoolName = document.getElementById('suSchoolName').value.trim();
+  const adminName = document.getElementById('suAdminName').value.trim();
+  const adminEmail = document.getElementById('suAdminEmail').value.trim();
+  const adminPassword = document.getElementById('suAdminPassword').value;
+
+  if(!schoolName || !adminName || !adminEmail || !adminPassword){
+    errBox.textContent = 'Fill in every field to continue.';
+    errBox.style.display = 'block';
+    return;
+  }
+  let slug = slugify(schoolName);
+  let n = 1;
+  while(DB.schools[slug]){ slug = slugify(schoolName) + '-' + n; n++; } // avoid slug collisions, like the real UNIQUE constraint would
+
+  DB.schools[slug] = {
+    name: schoolName,
+    classes: [], subjects: [],
+    users: { [adminEmail]: { password: adminPassword, role: 'admin', fullName: adminName } },
+    students: {}, attendance: {}, marks: {}, fees: {}, assignments: [], announcements: [],
+  };
+
+  okBox.textContent = `${schoolName} is set up. Logging you in as admin…`;
+  okBox.style.display = 'block';
+
+  state.schoolSlug = slug; state.email = adminEmail; state.user = DB.schools[slug].users[adminEmail];
+  setTimeout(() => { enterApp(); showToast('Welcome! Start by adding classes, teachers, and students.'); }, 700);
+}
+
+/* ---------------- APP SHELL ---------------- */
+const NAV = {
+  admin:   [ ["overview","Overview"], ["classes","Classes"], ["students","Students"], ["teachers","Teachers"], ["fees","Fees"] ],
+  teacher: [ ["myclasses","My Classes"], ["attendance","Take Attendance"], ["marks","Enter Marks"], ["post","Post Announcement"] ],
+  student: [ ["overview","Overview"], ["attendance","My Attendance"], ["marks","My Marks"], ["assignments","Assignments"], ["announcements","Announcements"] ],
+  parent:  [ ["overview","Overview"], ["attendance","Attendance"], ["marks","Marks"], ["fees","Fees"] ],
+};
+let currentNav = null;
+
+function enterApp(){
+  const school = DB.schools[state.schoolSlug];
+  showScreen('app');
+  document.getElementById('sbSchool').textContent = school.name;
+  document.getElementById('sbSlug').textContent = state.schoolSlug + '.sms.rw';
+  document.getElementById('sbRole').textContent = state.user.role;
+  document.getElementById('sbUser').textContent = state.user.fullName;
+
+  const navWrap = document.getElementById('navItems');
+  navWrap.innerHTML = '';
+  const items = NAV[state.user.role];
+  items.forEach(([key, label], i) => {
+    const el = document.createElement('div');
+    el.className = 'nav-item' + (i===0?' active':'');
+    el.textContent = label;
+    el.onclick = () => selectNav(key, el);
+    navWrap.appendChild(el);
+  });
+  currentNav = items[0][0];
+  render();
+}
+function selectNav(key, el){
+  currentNav = key;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+function setTitle(t, s){ document.getElementById('viewTitle').textContent = t; document.getElementById('viewSub').textContent = s || ''; }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+function render(){
+  const role = state.user.role;
+  if(role === 'admin') renderAdmin();
+  if(role === 'teacher') renderTeacher();
+  if(role === 'student') renderStudent();
+  if(role === 'parent') renderParent();
+}
+
+/* ================= ADMIN ================= */
+function renderAdmin(){
+  const school = DB.schools[state.schoolSlug];
+  const c = document.getElementById('viewContent');
+  const studentCount = Object.keys(school.students).length;
+  const teacherCount = Object.values(school.users).filter(u=>u.role==='teacher').length;
+  const unpaid = Object.values(school.fees).filter(f=>f.status!=='paid').length;
+
+  if(currentNav === 'overview'){
+    setTitle('Overview', school.name);
+    c.innerHTML = `
+      <div class="grid grid-3">
+        <div class="stat-card"><div class="label">Students</div><div class="value">${studentCount}</div></div>
+        <div class="stat-card"><div class="label">Teachers</div><div class="value">${teacherCount}</div></div>
+        <div class="stat-card"><div class="label">Fees pending</div><div class="value warn">${unpaid}</div></div>
+      </div>
+      <div class="panel" style="margin-top:20px;">
+        <div class="panel-head"><h3>Recent announcements</h3></div>
+        <div class="panel-body">
+          ${school.announcements.map(a=>`<div style="margin-bottom:12px;"><strong>${a.title}</strong><div style="font-size:12px;color:var(--text-soft);">${a.body} — ${a.date}</div></div>`).join('') || '<div class="empty">No announcements yet.</div>'}
+        </div>
+      </div>`;
+  }
+  if(currentNav === 'classes'){
+    setTitle('Classes & Subjects', 'Set these up first — everything else attaches to them');
+    const classRows = school.classes.map(cl=>{
+      const count = Object.values(school.students).filter(s=>s.classId===cl.id).length;
+      return `<tr><td>${cl.name}</td><td class="mono">${count} students</td></tr>`;
+    }).join('');
+    const subjectRows = school.subjects.map(s=>`<tr><td>${s.name}</td></tr>`).join('');
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-head"><h3>Add class</h3></div>
+        <div class="panel-body">
+          <div class="mini-form">
+            <input id="newClassName" placeholder="Class name, e.g. S3 A" class="full">
+          </div>
+          <button class="btn btn-save" onclick="addClass()">Add class</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Classes (${school.classes.length})</h3></div>
+        <div class="panel-body">
+          <table><thead><tr><th>Name</th><th>Roll size</th></tr></thead>
+          <tbody>${classRows || '<tr><td colspan="2" class="empty">No classes yet — add one above.</td></tr>'}</tbody></table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Add subject</h3></div>
+        <div class="panel-body">
+          <div class="mini-form">
+            <input id="newSubjectName" placeholder="Subject name, e.g. Mathematics" class="full">
+          </div>
+          <button class="btn btn-save" onclick="addSubject()">Add subject</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Subjects (${school.subjects.length})</h3></div>
+        <div class="panel-body">
+          <table><thead><tr><th>Name</th></tr></thead>
+          <tbody>${subjectRows || '<tr><td class="empty">No subjects yet — add one above.</td></tr>'}</tbody></table>
+        </div>
+      </div>`;
+  }
+  if(currentNav === 'students'){
+    setTitle('Students', 'Enroll and manage students');
+    if(school.classes.length === 0){
+      c.innerHTML = `<div class="panel"><div class="panel-body"><div class="empty">Add a class first, on the "Classes" tab — students need somewhere to belong.</div></div></div>`;
+      return;
+    }
+    const rows = Object.entries(school.students).map(([id,s])=>{
+      const cls = school.classes.find(x=>x.id===s.classId);
+      return `<tr><td class="mono">${s.admissionNo}</td><td>${s.name}</td><td>${cls?cls.name:'—'}</td></tr>`;
+    }).join('');
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-head"><h3>Add student</h3></div>
+        <div class="panel-body">
+          <div class="mini-form">
+            <input id="newStudentName" placeholder="Full name">
+            <select id="newStudentClass">${school.classes.map(cl=>`<option value="${cl.id}">${cl.name}</option>`).join('')}</select>
+            <input id="newStudentEmail" placeholder="Login email" class="full">
+          </div>
+          <button class="btn btn-save" onclick="addStudent()">Enroll student</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Roll (${studentCount})</h3></div>
+        <div class="panel-body">
+          <table><thead><tr><th class="mono">Admission No.</th><th>Name</th><th>Class</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="3" class="empty">No students yet.</td></tr>'}</tbody></table>
+        </div>
+      </div>`;
+  }
+  if(currentNav === 'teachers'){
+    setTitle('Teachers', 'Manage teaching staff');
+    const rows = Object.entries(school.users).filter(([_,u])=>u.role==='teacher').map(([email,u])=>{
+      const assigned = (u.classes||[]).map(a=>{
+        const cl = school.classes.find(c=>c.id===a.classId);
+        const sub = school.subjects.find(s=>s.id===a.subjectId);
+        return `${cl?cl.name:'?'} · ${sub?sub.name:'?'}`;
+      }).join(', ') || '—';
+      return `<tr><td>${u.fullName}</td><td class="mono">${email}</td><td>${assigned}</td></tr>`;
+    }).join('');
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-head"><h3>Add teacher</h3></div>
+        <div class="panel-body">
+          <div class="mini-form">
+            <input id="newTeacherName" placeholder="Full name">
+            <input id="newTeacherEmail" placeholder="Login email">
+          </div>
+          <button class="btn btn-save" onclick="addTeacher()">Add teacher</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Staff (${teacherCount})</h3></div>
+        <div class="panel-body">
+          <table><thead><tr><th>Name</th><th>Email</th><th>Assigned</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="3" class="empty">No teachers yet.</td></tr>'}</tbody></table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Assign a teacher to a class</h3></div>
+        <div class="panel-body">
+          ${(school.classes.length===0 || school.subjects.length===0) ? '<div class="empty">Add at least one class and one subject first, on the Classes tab.</div>' : `
+          <div class="mini-form">
+            <select id="assignTeacherEmail">${Object.entries(school.users).filter(([_,u])=>u.role==='teacher').map(([email,u])=>`<option value="${email}">${u.fullName}</option>`).join('') || '<option disabled>No teachers yet</option>'}</select>
+            <select id="assignClassId">${school.classes.map(cl=>`<option value="${cl.id}">${cl.name}</option>`).join('')}</select>
+            <select id="assignSubjectId" class="full">${school.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+          </div>
+          <button class="btn btn-save" onclick="assignTeacher()">Assign</button>
+          `}
+        </div>
+      </div>`;
+  }
+  if(currentNav === 'fees'){
+    setTitle('Fees', 'Track payment status per student');
+    const rows = Object.entries(school.fees).map(([sid,f])=>{
+      const s = school.students[sid];
+      return `<tr><td>${s?s.name:sid}</td><td class="mono">${f.term}</td><td class="mono">${f.due.toLocaleString()} RWF</td><td class="mono">${f.paid.toLocaleString()} RWF</td><td><span class="badge ${f.status}">${f.status}</span></td>
+      <td>${f.status!=='paid'?`<button class="btn quick-btn" onclick="markPaid('${sid}')">Mark paid</button>`:''}</td></tr>`;
+    }).join('');
+    const studentOptions = Object.entries(school.students).map(([sid,s])=>`<option value="${sid}">${s.name}</option>`).join('');
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-head"><h3>Create fee record</h3></div>
+        <div class="panel-body">
+          ${Object.keys(school.students).length===0 ? '<div class="empty">Enroll a student first, on the Students tab.</div>' : `
+          <div class="mini-form">
+            <select id="feeStudent">${studentOptions}</select>
+            <input id="feeTerm" placeholder="Term, e.g. Term 2">
+            <input id="feeAmount" type="number" placeholder="Amount due (RWF)">
+            <input id="feeDueDate" type="date">
+          </div>
+          <button class="btn btn-save" onclick="createFeeRecord()">Create fee record</button>
+          `}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Fee status</h3></div>
+        <div class="panel-body">
+          <table><thead><tr><th>Student</th><th>Term</th><th>Due</th><th>Paid</th><th>Status</th><th></th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="6" class="empty">No fee records yet.</td></tr>'}</tbody></table>
+        </div>
+      </div>`;
+  }
+}
+function addStudent(){
+  const school = DB.schools[state.schoolSlug];
+  const name = document.getElementById('newStudentName').value.trim();
+  const classId = document.getElementById('newStudentClass').value;
+  const email = document.getElementById('newStudentEmail').value.trim();
+  if(!name || !email){ showToast('Enter a name and email first'); return; }
+  const id = 'st' + (Object.keys(school.students).length + 1) + Date.now()%1000;
+  school.students[id] = { name, classId, admissionNo: 'GH-2026-0' + (Object.keys(school.students).length+1) };
+  school.users[email] = { password: 'student123', role: 'student', fullName: name, classId, studentId: id };
+  school.attendance[id] = []; school.marks[id] = [];
+  showToast(`${name} enrolled — login: ${email} / student123`);
+  renderAdmin();
+}
+function addTeacher(){
+  const school = DB.schools[state.schoolSlug];
+  const name = document.getElementById('newTeacherName').value.trim();
+  const email = document.getElementById('newTeacherEmail').value.trim();
+  if(!name || !email){ showToast('Enter a name and email first'); return; }
+  school.users[email] = { password: 'teach123', role: 'teacher', fullName: name, classes: [] };
+  showToast(`${name} added — login: ${email} / teach123`);
+  renderAdmin();
+}
+function markPaid(sid){
+  const school = DB.schools[state.schoolSlug];
+  const f = school.fees[sid];
+  f.paid = f.due; f.status = 'paid';
+  showToast('Payment recorded');
+  renderAdmin();
+}
+function addClass(){
+  const school = DB.schools[state.schoolSlug];
+  const name = document.getElementById('newClassName').value.trim();
+  if(!name){ showToast('Enter a class name first'); return; }
+  if(school.classes.some(c=>c.name.toLowerCase()===name.toLowerCase())){ showToast('That class already exists'); return; }
+  school.classes.push({ id: 'c' + Date.now(), name });
+  showToast(`${name} added`);
+  renderAdmin();
+}
+function addSubject(){
+  const school = DB.schools[state.schoolSlug];
+  const name = document.getElementById('newSubjectName').value.trim();
+  if(!name){ showToast('Enter a subject name first'); return; }
+  if(school.subjects.some(s=>s.name.toLowerCase()===name.toLowerCase())){ showToast('That subject already exists'); return; }
+  school.subjects.push({ id: 'sub' + Date.now(), name });
+  showToast(`${name} added`);
+  renderAdmin();
+}
+function assignTeacher(){
+  const school = DB.schools[state.schoolSlug];
+  const email = document.getElementById('assignTeacherEmail').value;
+  const classId = document.getElementById('assignClassId').value;
+  const subjectId = document.getElementById('assignSubjectId').value;
+  const teacher = school.users[email];
+  if(!teacher){ showToast('Add a teacher first'); return; }
+  if(!teacher.classes) teacher.classes = [];
+  if(teacher.classes.some(a=>a.classId===classId && a.subjectId===subjectId)){ showToast('Already assigned'); return; }
+  teacher.classes.push({ classId, subjectId });
+  const cl = school.classes.find(c=>c.id===classId);
+  showToast(`${teacher.fullName} assigned to ${cl.name}`);
+  renderAdmin();
+}
+function createFeeRecord(){
+  const school = DB.schools[state.schoolSlug];
+  const studentId = document.getElementById('feeStudent').value;
+  const term = document.getElementById('feeTerm').value.trim();
+  const amount = Number(document.getElementById('feeAmount').value);
+  const dueDate = document.getElementById('feeDueDate').value;
+  if(!term || !amount){ showToast('Enter a term and amount first'); return; }
+  school.fees[studentId] = { term, year: 2026, due: amount, paid: 0, status: 'unpaid', dueDate };
+  showToast('Fee record created');
+  renderAdmin();
+}
+
+/* ================= TEACHER ================= */
+let teacherSelectedClass = null;
+function renderTeacher(){
+  const school = DB.schools[state.schoolSlug];
+  const myClasses = state.user.classes || [];
+  const c = document.getElementById('viewContent');
+
+  if(currentNav === 'myclasses'){
+    setTitle('My Classes', 'Classes assigned to you this term');
+    const rows = myClasses.map(a=>{
+      const cl = school.classes.find(x=>x.id===a.classId);
+      const sub = school.subjects.find(x=>x.id===a.subjectId);
+      const count = Object.values(school.students).filter(s=>s.classId===a.classId).length;
+      return `<tr><td>${cl.name}</td><td>${sub.name}</td><td class="mono">${count} students</td></tr>`;
+    }).join('');
+    c.innerHTML = `<div class="panel"><div class="panel-head"><h3>Assignments</h3></div><div class="panel-body">
+      <table><thead><tr><th>Class</th><th>Subject</th><th>Roll size</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="3" class="empty">No classes assigned.</td></tr>'}</tbody></table>
+    </div></div>`;
+  }
+  if(currentNav === 'attendance'){
+    setTitle('Take Attendance', "Pick today's class, then mark each student");
+    if(!teacherSelectedClass && myClasses[0]) teacherSelectedClass = myClasses[0].classId;
+    const chips = myClasses.map(a=>{
+      const cl = school.classes.find(x=>x.id===a.classId);
+      return `<div class="class-chip ${a.classId===teacherSelectedClass?'active':''}" onclick="pickTeacherClass('${a.classId}')">${cl.name}</div>`;
+    }).join('');
+    const roster = Object.entries(school.students).filter(([_,s])=>s.classId===teacherSelectedClass);
+    const today = "2026-08-23";
+    const rows = roster.map(([sid,s])=>{
+      const rec = (school.attendance[sid]||[]).find(a=>a.date===today);
+      const st = rec ? rec.status : null;
+      return `<div class="roll-row">
+        <div class="roll-name">${s.name}</div>
+        <div class="roll-status">
+          <button class="roll-btn p ${st==='present'?'on':''}" onclick="markAttendance('${sid}','present')" title="Present">P</button>
+          <button class="roll-btn l ${st==='late'?'on':''}" onclick="markAttendance('${sid}','late')" title="Late">L</button>
+          <button class="roll-btn a ${st==='absent'?'on':''}" onclick="markAttendance('${sid}','absent')" title="Absent">A</button>
+        </div>
+      </div>`;
+    }).join('');
+    c.innerHTML = `
+      <div class="class-picker">${chips}</div>
+      <div class="panel"><div class="panel-head"><h3>Roll — ${today}</h3></div>
+        <div class="panel-body">${rows || '<div class="empty">No students in this class yet.</div>'}</div>
+      </div>`;
+  }
+  if(currentNav === 'marks'){
+    setTitle('Enter Marks', 'Record exam scores for your class');
+    if(!teacherSelectedClass && myClasses[0]) teacherSelectedClass = myClasses[0].classId;
+    const chips = myClasses.map(a=>{
+      const cl = school.classes.find(x=>x.id===a.classId);
+      return `<div class="class-chip ${a.classId===teacherSelectedClass?'active':''}" onclick="pickTeacherClass('${a.classId}')">${cl.name}</div>`;
+    }).join('');
+    const subj = school.subjects.find(s=>s.id===(myClasses.find(a=>a.classId===teacherSelectedClass)||{}).subjectId);
+    const roster = Object.entries(school.students).filter(([_,s])=>s.classId===teacherSelectedClass);
+    const rows = roster.map(([sid,s])=>{
+      const existing = (school.marks[sid]||[]).find(m=>m.subject===subj?.name && m.exam==='Mid Term 1');
+      return `<tr><td>${s.name}</td><td><input type="number" min="0" max="100" style="width:70px;padding:6px;border:1px solid var(--line);border-radius:5px;font-family:var(--mono);" id="mark_${sid}" value="${existing?existing.score:''}"></td>
+      <td><button class="btn quick-btn" onclick="saveMark('${sid}','${subj?.name}')">Save</button></td></tr>`;
+    }).join('');
+    c.innerHTML = `
+      <div class="class-picker">${chips}</div>
+      <div class="panel"><div class="panel-head"><h3>${subj?subj.name:''} — Mid Term 1</h3></div>
+        <div class="panel-body"><table><thead><tr><th>Student</th><th>Score /100</th><th></th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="3" class="empty">No students in this class.</td></tr>'}</tbody></table></div>
+      </div>`;
+  }
+  if(currentNav === 'post'){
+    setTitle('Post Announcement', 'Visible to students and parents in your class');
+    const chips = myClasses.map(a=>{
+      const cl = school.classes.find(x=>x.id===a.classId);
+      return `<option value="${a.classId}">${cl.name}</option>`;
+    }).join('');
+    c.innerHTML = `
+      <div class="panel"><div class="panel-head"><h3>New announcement</h3></div>
+        <div class="panel-body">
+          <div class="mini-form">
+            <select id="annClass">${chips}</select>
+            <input id="annTitle" placeholder="Title" class="full">
+            <textarea id="annBody" placeholder="Message" class="full" style="grid-column:1/-1;padding:9px 10px;border:1px solid var(--line);border-radius:6px;font-family:var(--body);min-height:70px;"></textarea>
+          </div>
+          <button class="btn btn-save" onclick="postAnnouncement()">Post to class</button>
+        </div>
+      </div>`;
+  }
+}
+function pickTeacherClass(id){ teacherSelectedClass = id; renderTeacher(); }
+function markAttendance(sid, status){
+  const school = DB.schools[state.schoolSlug];
+  const today = "2026-08-23";
+  if(!school.attendance[sid]) school.attendance[sid] = [];
+  const list = school.attendance[sid];
+  const existing = list.find(a=>a.date===today);
+  if(existing) existing.status = status; else list.push({date:today, status});
+  renderTeacher();
+  showToast('Attendance saved');
+}
+function saveMark(sid, subjectName){
+  const school = DB.schools[state.schoolSlug];
+  const val = Number(document.getElementById('mark_'+sid).value);
+  if(!school.marks[sid]) school.marks[sid] = [];
+  const list = school.marks[sid];
+  const existing = list.find(m=>m.subject===subjectName && m.exam==='Mid Term 1');
+  if(existing) existing.score = val; else list.push({exam:'Mid Term 1', subject: subjectName, score: val, max: 100});
+  showToast('Mark saved');
+}
+function postAnnouncement(){
+  const school = DB.schools[state.schoolSlug];
+  const classId = document.getElementById('annClass').value;
+  const title = document.getElementById('annTitle').value.trim();
+  const body = document.getElementById('annBody').value.trim();
+  if(!title){ showToast('Add a title first'); return; }
+  school.announcements.unshift({ classId, title, body, date: "2026-08-23" });
+  document.getElementById('annTitle').value=''; document.getElementById('annBody').value='';
+  showToast('Announcement posted');
+}
+
+/* ================= STUDENT ================= */
+function renderStudent(){
+  const school = DB.schools[state.schoolSlug];
+  const sid = state.user.studentId;
+  const s = school.students[sid];
+  const c = document.getElementById('viewContent');
+
+  if(currentNav === 'overview'){
+    setTitle('Overview', `${s.name} · ${school.classes.find(x=>x.id===s.classId)?.name}`);
+    const att = school.attendance[sid]||[];
+    const presentPct = att.length ? Math.round(100*att.filter(a=>a.status==='present').length/att.length) : 100;
+    const marks = school.marks[sid]||[];
+    const avg = marks.length ? Math.round(marks.reduce((a,m)=>a+m.score,0)/marks.length) : 0;
+    c.innerHTML = `<div class="grid grid-3">
+      <div class="stat-card"><div class="label">Attendance</div><div class="value good">${presentPct}%</div></div>
+      <div class="stat-card"><div class="label">Average score</div><div class="value">${avg}</div></div>
+      <div class="stat-card"><div class="label">Assignments due</div><div class="value warn">${school.assignments.filter(a=>a.classId===s.classId).length}</div></div>
+    </div>`;
+  }
+  if(currentNav === 'attendance'){
+    setTitle('My Attendance', 'Last recorded days');
+    const rows = (school.attendance[sid]||[]).slice().reverse().map(a=>`<tr><td class="mono">${a.date}</td><td><span class="badge ${a.status}">${a.status}</span></td></tr>`).join('');
+    c.innerHTML = `<div class="panel"><div class="panel-body"><table><thead><tr><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="2" class="empty">No records yet.</td></tr>'}</tbody></table></div></div>`;
+  }
+  if(currentNav === 'marks'){
+    setTitle('My Marks', 'Mid Term 1 results');
+    const rows = (school.marks[sid]||[]).map(m=>`<tr><td>${m.subject}</td><td class="mono">${m.score}/${m.max}</td></tr>`).join('');
+    c.innerHTML = `<div class="panel"><div class="panel-body"><table><thead><tr><th>Subject</th><th>Score</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="2" class="empty">No marks entered yet.</td></tr>'}</tbody></table></div></div>`;
+  }
+  if(currentNav === 'assignments'){
+    setTitle('Assignments', 'Set by your teachers');
+    const list = school.assignments.filter(a=>a.classId===s.classId);
+    c.innerHTML = `<div class="panel"><div class="panel-body">${list.map(a=>
+      `<div style="margin-bottom:14px;"><strong>${a.title}</strong><div style="font-size:12px;color:var(--text-soft);">${a.subject} · due ${a.due}</div></div>`
+    ).join('') || '<div class="empty">No assignments posted.</div>'}</div></div>`;
+  }
+  if(currentNav === 'announcements'){
+    setTitle('Announcements', '');
+    const list = school.announcements.filter(a=>a.classId===null || a.classId===s.classId);
+    c.innerHTML = `<div class="panel"><div class="panel-body">${list.map(a=>
+      `<div style="margin-bottom:14px;"><strong>${a.title}</strong><div style="font-size:12px;color:var(--text-soft);">${a.body} — ${a.date}</div></div>`
+    ).join('') || '<div class="empty">Nothing posted yet.</div>'}</div></div>`;
+  }
+}
+
+/* ================= PARENT ================= */
+let parentSelectedChild = null;
+function renderParent(){
+  const school = DB.schools[state.schoolSlug];
+  const childIds = state.user.children || [];
+  if(!parentSelectedChild) parentSelectedChild = childIds[0];
+  const c = document.getElementById('viewContent');
+  const tabs = childIds.map(id => `<div class="child-tab ${id===parentSelectedChild?'active':''}" onclick="pickChild('${id}')">${school.students[id]?.name}</div>`).join('');
+
+  const s = school.students[parentSelectedChild];
+  if(!s){ document.getElementById('viewContent').innerHTML = '<div class="empty">No linked children.</div>'; return; }
+
+  if(currentNav === 'overview'){
+    setTitle('Overview', 'Your children at ' + school.name);
+    const att = school.attendance[parentSelectedChild]||[];
+    const presentPct = att.length ? Math.round(100*att.filter(a=>a.status==='present').length/att.length) : 100;
+    const fee = school.fees[parentSelectedChild];
+    c.innerHTML = `<div class="child-tabs">${tabs}</div>
+      <div class="grid grid-3">
+        <div class="stat-card"><div class="label">Attendance</div><div class="value good">${presentPct}%</div></div>
+        <div class="stat-card"><div class="label">Class</div><div class="value" style="font-size:18px;">${school.classes.find(x=>x.id===s.classId)?.name}</div></div>
+        <div class="stat-card"><div class="label">Fees</div><div class="value ${fee?.status==='paid'?'good':'bad'}" style="font-size:18px;">${fee?fee.status:'—'}</div></div>
+      </div>`;
+  }
+  if(currentNav === 'attendance'){
+    setTitle('Attendance', s.name);
+    const rows = (school.attendance[parentSelectedChild]||[]).slice().reverse().map(a=>`<tr><td class="mono">${a.date}</td><td><span class="badge ${a.status}">${a.status}</span></td></tr>`).join('');
+    c.innerHTML = `<div class="child-tabs">${tabs}</div><div class="panel"><div class="panel-body"><table><thead><tr><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="2" class="empty">No records yet.</td></tr>'}</tbody></table></div></div>`;
+  }
+  if(currentNav === 'marks'){
+    setTitle('Marks', s.name);
+    const rows = (school.marks[parentSelectedChild]||[]).map(m=>`<tr><td>${m.subject}</td><td class="mono">${m.score}/${m.max}</td></tr>`).join('');
+    c.innerHTML = `<div class="child-tabs">${tabs}</div><div class="panel"><div class="panel-body"><table><thead><tr><th>Subject</th><th>Score</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="2" class="empty">No marks yet.</td></tr>'}</tbody></table></div></div>`;
+  }
+  if(currentNav === 'fees'){
+    setTitle('Fees', s.name);
+    const f = school.fees[parentSelectedChild];
+    c.innerHTML = `<div class="child-tabs">${tabs}</div><div class="panel"><div class="panel-body">
+      ${f ? `<table><tr><th>Term</th><td class="mono">${f.term}</td></tr><tr><th>Due</th><td class="mono">${f.due.toLocaleString()} RWF</td></tr><tr><th>Paid</th><td class="mono">${f.paid.toLocaleString()} RWF</td></tr><tr><th>Status</th><td><span class="badge ${f.status}">${f.status}</span></td></tr></table>` : '<div class="empty">No fee record yet.</div>'}
+    </div></div>`;
+  }
+}
+function pickChild(id){ parentSelectedChild = id; renderParent(); }
+</script>
+</body>
+</html>
