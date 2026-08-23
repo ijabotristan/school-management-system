@@ -20,6 +20,7 @@
     --display:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
   }
   *{box-sizing:border-box;}
+  html,body{overflow-x:hidden;max-width:100%;}
   body{margin:0;font-family:var(--body);background:var(--paper);color:var(--text);}
   a{color:inherit;}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:6px;border:none;font-family:var(--body);font-weight:600;font-size:14px;cursor:pointer;transition:transform .08s ease;text-decoration:none;}
@@ -106,11 +107,12 @@
   /* ================= LOGIN / SIGNUP ================= */
   .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 16px;background:linear-gradient(180deg, var(--ink) 0%, var(--ink) 220px, var(--paper) 220px);}
   .auth-card{width:100%;max-width:440px;background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 24px 48px rgba(27,42,74,0.25);}
-  .auth-head{background:var(--ink);color:#fff;padding:24px 28px 20px;display:flex;align-items:center;justify-content:space-between;}
-  .auth-head .back{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;}
+  .auth-head{background:var(--ink);color:#fff;padding:24px 28px 20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .auth-head > div:first-child{flex:1;min-width:0;}
+  .auth-head .back{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;flex-shrink:0;}
   .auth-head .back:hover{color:#fff;}
   .auth-head .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px;}
-  .auth-head h1{font-family:var(--display);font-size:22px;margin:0;font-weight:600;}
+  .auth-head h1{font-family:var(--display);font-size:22px;margin:0;font-weight:600;overflow-wrap:break-word;word-break:break-word;}
   .auth-body{padding:24px 28px 28px;}
   .field{margin-bottom:15px;}
   .field label{display:block;font-size:12px;font-weight:600;color:var(--text-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
@@ -124,18 +126,26 @@
   .switcher a:hover{text-decoration:underline;}
   .hint{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);}
   .hint p{font-size:11px;color:var(--text-soft);margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
-  .hint-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--text-soft);padding:3px 0;}
+  .hint-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--text-soft);padding:3px 0;word-break:break-all;}
   .quick-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;}
   .quick-btn{padding:8px 4px;border-radius:6px;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:600;cursor:pointer;color:var(--ink);font-family:var(--body);}
   .quick-btn:hover{border-color:var(--accent);color:var(--accent-dark);}
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .role-card{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:20px 16px;text-align:center;cursor:pointer;transition:border-color .12s ease, transform .08s ease, box-shadow .12s ease;}
+  .role-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 20px rgba(27,42,74,0.10);}
+  .role-icon{font-size:30px;display:block;margin-bottom:10px;}
+  .role-name{font-family:var(--display);font-weight:600;font-size:15px;color:var(--ink);}
+  .role-desc{font-size:11px;color:var(--text-soft);margin-top:3px;}
+  .role-badge-light{background:rgba(217,166,46,0.18);color:var(--accent);}
+
   /* ================= APP SHELL (unchanged from working demo) ================= */
   .shell{min-height:100vh;}
-  .shell.active{display:flex;}
+  .shell.active{display:flex;align-items:stretch;}
   .sidebar{width:240px;background:var(--ink);color:#fff;display:flex;flex-direction:column;flex-shrink:0;}
-  .sidebar-head{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.12);}
-  .sidebar-head .school{font-family:var(--display);font-weight:600;font-size:17px;}
+  .sidebar-head{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.12);min-width:0;}
+  .sidebar-head .school{font-family:var(--display);font-weight:600;font-size:17px;overflow-wrap:break-word;word-break:break-word;}
   .sidebar-head .slug{font-family:var(--mono);font-size:11px;color:var(--accent);margin-top:2px;}
   .role-badge{display:inline-block;margin-top:12px;padding:4px 10px;border-radius:20px;background:rgba(217,166,46,0.16);color:var(--accent);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);}
   .nav-items{flex:1;padding:14px 10px;}
@@ -197,6 +207,89 @@
   .child-tab{padding:9px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;cursor:pointer;}
   .child-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
   .empty{padding:24px;text-align:center;color:var(--text-soft);font-size:13px;}
+
+  .pay-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .pay-method{display:flex;align-items:center;gap:10px;padding:14px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;transition:border-color .12s ease, transform .08s ease;}
+  .pay-method:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .pay-icon{font-size:20px;}
+  .pay-name{font-size:13px;font-weight:600;}
+  .pay-sub{font-size:11px;color:var(--text-soft);}
+
+  /* ================= RESPONSIVE ================= */
+  .panel-body{overflow-x:auto;}
+
+  @media(max-width:900px){
+    .nav{padding:14px 20px;}
+    .hero{padding:56px 24px 64px;}
+    .slides-section{padding:48px 20px 70px;}
+    .slide-copy{padding:32px 26px;}
+    .cta-band{padding:48px 24px;}
+  }
+
+  @media(max-width:768px){
+    /* home */
+    .nav{flex-wrap:wrap;gap:10px;justify-content:center;text-align:center;}
+    .nav .actions{width:100%;justify-content:center;}
+    .hero h1{font-size:28px;}
+    .hero p{font-size:14px;}
+    .ledger-strip{padding:16px 20px;gap:18px;}
+    .slide{grid-template-columns:1fr;}
+    .slide-copy{padding:26px 20px;}
+    .slide-visual{padding:24px;border-left:none;border-top:1px dashed var(--line);}
+    .slides-head h2{font-size:24px;}
+
+    /* auth */
+    .auth-wrap{padding:20px 12px;}
+    .auth-head{padding:20px 20px 16px;}
+    .auth-body{padding:20px;}
+    .field-row{grid-template-columns:1fr;}
+    .quick-row{grid-template-columns:repeat(2,1fr);}
+
+    /* app shell -> compact stacked header instead of the tall side column */
+    .shell.active{flex-direction:column;height:auto;min-height:100vh;}
+    .sidebar{width:100%;flex-direction:column;padding:0;height:auto;flex-shrink:0;}
+    .main{width:100%;flex:1 1 auto;overflow-y:visible;min-height:0;}
+    .sidebar-head{border-bottom:none;padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+    .sidebar-head .school{font-size:15px;}
+    .sidebar-head .slug{display:none;} /* redundant on small screens, saves a line */
+    .role-badge{margin-top:0;}
+    .nav-items{flex:none;display:flex;flex-direction:row;overflow-x:auto;gap:6px;padding:8px 16px;-webkit-overflow-scrolling:touch;}
+    .nav-item{white-space:nowrap;margin-bottom:0;flex-shrink:0;}
+    .sidebar-foot{border-top:1px solid rgba(255,255,255,0.12);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .sidebar-foot .user-name{font-size:12px;}
+    .sidebar-foot .logout{margin-top:0;}
+
+    .topbar{padding:16px 18px;}
+    .topbar h2{font-size:18px;}
+    .content{padding:16px 18px 44px;}
+    .mini-form{grid-template-columns:1fr;}
+    .grid-3{grid-template-columns:1fr;}
+    .pay-methods{grid-template-columns:1fr;}
+    .class-picker{gap:6px;}
+    .child-tabs{flex-wrap:wrap;}
+    table{min-width:520px;} /* scrolls inside .panel-body rather than squashing */
+  }
+
+  @media(max-width:420px){
+    .hero h1{font-size:24px;}
+    .quick-row{grid-template-columns:1fr 1fr;}
+    .stat-card .value{font-size:22px;}
+    .roll-btn{width:30px;height:30px;}
+    .role-grid{grid-template-columns:1fr;}
+    .nav{padding:12px 14px;}
+    .hero{padding:40px 16px 48px;}
+    .ledger-strip{padding:14px 16px;gap:12px;}
+    .slides-section{padding:32px 14px 50px;}
+    .slide-copy{padding:20px 16px;}
+    .slide-copy h3{font-size:20px;}
+    .cta-band{padding:36px 16px;}
+    .auth-head{padding:18px 16px 14px;}
+    .auth-body{padding:16px;}
+    .sidebar{padding:10px 12px;}
+    .topbar{padding:14px 14px;}
+    .content{padding:14px 14px 40px;}
+    .role-card{padding:16px 10px;}
+  }
 </style>
 </head>
 <body>
@@ -206,7 +299,7 @@
   <div class="nav">
     <div class="logo"><span class="dot"></span> Rollcall</div>
     <div class="actions">
-      <button class="btn btn-ghost" onclick="showScreen('login')">Log in</button>
+      <button class="btn btn-ghost" onclick="showScreen('roles')">Log in</button>
       <button class="btn btn-primary" onclick="showScreen('signup')">Register your school</button>
     </div>
   </div>
@@ -217,7 +310,7 @@
     <p>Admins, teachers, students, and parents each get exactly the view they need — attendance, marks, fees, and announcements, all in one place, all in sync.</p>
     <div class="actions">
       <button class="btn btn-primary" onclick="showScreen('signup')">Register your school — free</button>
-      <button class="btn btn-ghost" onclick="showScreen('login')">I already have an account</button>
+      <button class="btn btn-ghost" onclick="showScreen('roles')">I already have an account</button>
     </div>
   </div>
   <div class="ledger-strip">
@@ -348,6 +441,45 @@
   <div class="footer">ROLLCALL · SCHOOL MANAGEMENT SYSTEM · DEMO BUILD</div>
 </div>
 
+<!-- ===================== ROLE SELECT ===================== -->
+<div class="screen" id="screen-roles">
+  <div class="auth-wrap">
+    <div class="auth-card" style="max-width:480px;">
+      <div class="auth-head">
+        <div>
+          <p class="tag">Log in</p>
+          <h1>Who's logging in?</h1>
+        </div>
+        <div class="back" onclick="showScreen('home')">← Home</div>
+      </div>
+      <div class="auth-body">
+        <div class="role-grid">
+          <div class="role-card" onclick="selectLoginRole('admin')">
+            <span class="role-icon">🏫</span>
+            <div class="role-name">Admin</div>
+            <div class="role-desc">Runs the school</div>
+          </div>
+          <div class="role-card" onclick="selectLoginRole('teacher')">
+            <span class="role-icon">📋</span>
+            <div class="role-name">Teacher</div>
+            <div class="role-desc">Teaches a class</div>
+          </div>
+          <div class="role-card" onclick="selectLoginRole('student')">
+            <span class="role-icon">🎒</span>
+            <div class="role-name">Student</div>
+            <div class="role-desc">Enrolled learner</div>
+          </div>
+          <div class="role-card" onclick="selectLoginRole('parent')">
+            <span class="role-icon">👪</span>
+            <div class="role-name">Parent</div>
+            <div class="role-desc">Guardian of a student</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== LOGIN ===================== -->
 <div class="screen" id="screen-login">
   <div class="auth-wrap">
@@ -356,8 +488,9 @@
         <div>
           <p class="tag">Log in</p>
           <h1 id="schoolLabel">Greenhill Academy</h1>
+          <div class="role-badge role-badge-light" id="loginRoleBadge">Admin</div>
         </div>
-        <div class="back" onclick="showScreen('home')">← Home</div>
+        <div class="back" onclick="showScreen('roles')">← Change role</div>
       </div>
       <div class="auth-body">
         <div class="auth-error" id="loginError"></div>
@@ -378,7 +511,7 @@
         <div class="switcher">New school? <a onclick="showScreen('signup')">Register it here</a></div>
 
         <div class="hint">
-          <p>Demo accounts for this school</p>
+          <p id="hintLabel">Demo accounts for this school</p>
           <div id="hintList"></div>
           <div class="quick-row" id="quickRow"></div>
         </div>
@@ -423,7 +556,7 @@
         </div>
         <button class="btn btn-dark" onclick="registerSchool()">Create school &amp; continue</button>
 
-        <div class="switcher">Already registered? <a onclick="showScreen('login')">Log in</a></div>
+        <div class="switcher">Already registered? <a onclick="showScreen('roles')">Log in</a></div>
       </div>
     </div>
   </div>
@@ -441,6 +574,7 @@
     <div class="sidebar-foot">
       <div class="user-name" id="sbUser">—</div>
       <div class="logout" onclick="logout()">Log out</div>
+      <div class="logout" onclick="resetAllData()" style="margin-top:2px;">Reset demo data</div>
     </div>
   </div>
   <div class="main">
@@ -515,15 +649,59 @@ let DB = {
 };
 
 let state = { schoolSlug: "greenhill", email: null, user: null };
+let loginRole = 'admin';
+const ROLE_LABELS = { admin: 'Admin', teacher: 'Teacher', student: 'Student', parent: 'Parent' };
+
+/* ---------------- PERSISTENCE ----------------
+   Saves the whole mock DB + the current session to this browser's
+   localStorage, so a refresh doesn't wipe your data.
+   NOTE: this only persists on THIS device/browser. Two different devices
+   will still see two different copies — that needs a real shared backend
+   (see schema.sql + src/routes/*.js), which Netlify alone can't run since
+   it only serves static files. */
+const STORAGE_KEY = 'rollcall_sms_v1';
+function saveDB(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      DB,
+      session: { schoolSlug: state.schoolSlug, email: state.email }
+    }));
+  }catch(e){ console.error('Could not save to localStorage', e); }
+}
+function loadDB(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return false;
+    const parsed = JSON.parse(raw);
+    if(parsed.DB) DB = parsed.DB;
+    if(parsed.session && parsed.session.email){
+      const school = DB.schools[parsed.session.schoolSlug];
+      const user = school && school.users[parsed.session.email];
+      if(school && user){
+        state.schoolSlug = parsed.session.schoolSlug;
+        state.email = parsed.session.email;
+        state.user = user;
+        loginRole = user.role;
+        return true; // tells init code to skip the home page and go straight to the dashboard
+      }
+    }
+  }catch(e){ console.error('Could not load saved data', e); }
+  return false;
+}
 
 /* ---------------- SCREEN SWITCHING ---------------- */
 function showScreen(name){
   document.getElementById('screen-home').style.display = name === 'home' ? 'block' : 'none';
+  document.getElementById('screen-roles').style.display = name === 'roles' ? 'flex' : 'none';
   document.getElementById('screen-login').style.display = name === 'login' ? 'flex' : 'none';
   document.getElementById('screen-signup').style.display = name === 'signup' ? 'flex' : 'none';
   document.getElementById('screen-app').style.display = name === 'app' ? 'flex' : 'none';
   if(name === 'login'){ populateSchoolOptions(); onSchoolChange(); }
   window.scrollTo(0,0);
+}
+function selectLoginRole(role){
+  loginRole = role;
+  showScreen('login');
 }
 
 /* ---------------- SLIDES ---------------- */
@@ -568,21 +746,27 @@ function onSchoolChange(){
   state.schoolSlug = document.getElementById('schoolSlug').value;
   const school = DB.schools[state.schoolSlug];
   document.getElementById('schoolLabel').textContent = school.name;
+  document.getElementById('loginRoleBadge').textContent = ROLE_LABELS[loginRole];
   renderHints();
 }
 function renderHints(){
   const school = DB.schools[state.schoolSlug];
   const hintList = document.getElementById('hintList');
   const quickRow = document.getElementById('quickRow');
+  document.getElementById('hintLabel').textContent = `Demo ${ROLE_LABELS[loginRole].toLowerCase()} accounts for this school`;
   hintList.innerHTML = ''; quickRow.innerHTML = '';
-  Object.entries(school.users).forEach(([email, u]) => {
+  const matches = Object.entries(school.users).filter(([_,u]) => u.role === loginRole);
+  if(matches.length === 0){
+    hintList.innerHTML = `<div class="hint-row" style="justify-content:flex-start;">No ${ROLE_LABELS[loginRole].toLowerCase()} accounts here yet.</div>`;
+  }
+  matches.forEach(([email, u]) => {
     const row = document.createElement('div');
     row.className = 'hint-row';
-    row.innerHTML = `<span>${u.role}</span><span>${email}</span>`;
+    row.innerHTML = `<span>${u.fullName}</span><span>${email}</span>`;
     hintList.appendChild(row);
     const btn = document.createElement('button');
     btn.className = 'quick-btn';
-    btn.textContent = u.role;
+    btn.textContent = u.fullName.split(' ')[0];
     btn.onclick = () => { document.getElementById('loginEmail').value = email; document.getElementById('loginPassword').value = u.password; attemptLogin(); };
     quickRow.appendChild(btn);
   });
@@ -593,17 +777,25 @@ function attemptLogin(){
   const password = document.getElementById('loginPassword').value;
   const errBox = document.getElementById('loginError');
   const u = school.users[email];
+
   if(!u || u.password !== password){
     errBox.textContent = 'Invalid email or password for this school.';
     errBox.style.display = 'block';
     return;
   }
+  if(u.role !== loginRole){
+    errBox.textContent = `That account is registered as ${ROLE_LABELS[u.role]}, not ${ROLE_LABELS[loginRole]}. Tap "Change role" above if that's you.`;
+    errBox.style.display = 'block';
+    return;
+  }
   errBox.style.display = 'none';
   state.email = email; state.user = u;
+  saveDB();
   enterApp();
 }
 function logout(){
   state = { schoolSlug: state.schoolSlug, email: null, user: null };
+  saveDB();
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
   showScreen('home');
@@ -647,6 +839,7 @@ function registerSchool(){
   okBox.style.display = 'block';
 
   state.schoolSlug = slug; state.email = adminEmail; state.user = DB.schools[slug].users[adminEmail];
+  saveDB();
   setTimeout(() => { enterApp(); showToast('Welcome! Start by adding classes, teachers, and students.'); }, 700);
 }
 
@@ -773,16 +966,23 @@ function renderAdmin(){
     }
     const rows = Object.entries(school.students).map(([id,s])=>{
       const cls = school.classes.find(x=>x.id===s.classId);
-      return `<tr><td class="mono">${s.admissionNo}</td><td>${s.name}</td><td>${cls?cls.name:'—'}</td></tr>`;
+      const parentEntry = Object.entries(school.users).find(([_,u])=>u.role==='parent' && (u.children||[]).includes(id));
+      return `<tr><td class="mono">${s.admissionNo}</td><td>${s.name}</td><td>${cls?cls.name:'—'}</td><td class="mono">${parentEntry?parentEntry[0]:'—'}</td></tr>`;
     }).join('');
     c.innerHTML = `
       <div class="panel">
         <div class="panel-head"><h3>Add student</h3></div>
         <div class="panel-body">
           <div class="mini-form">
-            <input id="newStudentName" placeholder="Full name">
+            <input id="newStudentName" placeholder="Student full name">
             <select id="newStudentClass">${school.classes.map(cl=>`<option value="${cl.id}">${cl.name}</option>`).join('')}</select>
-            <input id="newStudentEmail" placeholder="Login email" class="full">
+            <input id="newStudentEmail" placeholder="Student login email" class="full">
+          </div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-soft);font-weight:600;margin:14px 0 8px;">Parent account (optional — leave blank to skip)</div>
+          <div class="mini-form">
+            <input id="newParentName" placeholder="Parent full name">
+            <input id="newParentEmail" placeholder="Parent login email">
+            <input id="newParentPassword" placeholder="Parent password" class="full">
           </div>
           <button class="btn btn-save" onclick="addStudent()">Enroll student</button>
         </div>
@@ -790,8 +990,8 @@ function renderAdmin(){
       <div class="panel">
         <div class="panel-head"><h3>Roll (${studentCount})</h3></div>
         <div class="panel-body">
-          <table><thead><tr><th class="mono">Admission No.</th><th>Name</th><th>Class</th></tr></thead>
-          <tbody>${rows || '<tr><td colspan="3" class="empty">No students yet.</td></tr>'}</tbody></table>
+          <table><thead><tr><th class="mono">Admission No.</th><th>Name</th><th>Class</th><th>Parent login</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="4" class="empty">No students yet.</td></tr>'}</tbody></table>
         </div>
       </div>`;
   }
@@ -874,12 +1074,40 @@ function addStudent(){
   const name = document.getElementById('newStudentName').value.trim();
   const classId = document.getElementById('newStudentClass').value;
   const email = document.getElementById('newStudentEmail').value.trim();
-  if(!name || !email){ showToast('Enter a name and email first'); return; }
+  if(!name || !email){ showToast('Enter a student name and email first'); return; }
+
   const id = 'st' + (Object.keys(school.students).length + 1) + Date.now()%1000;
   school.students[id] = { name, classId, admissionNo: 'GH-2026-0' + (Object.keys(school.students).length+1) };
   school.users[email] = { password: 'student123', role: 'student', fullName: name, classId, studentId: id };
   school.attendance[id] = []; school.marks[id] = [];
-  showToast(`${name} enrolled — login: ${email} / student123`);
+
+  const parentName = document.getElementById('newParentName').value.trim();
+  const parentEmail = document.getElementById('newParentEmail').value.trim();
+  const parentPassword = document.getElementById('newParentPassword').value.trim();
+
+  let parentMsg = '';
+  if(parentEmail){
+    if(school.users[parentEmail] && school.users[parentEmail].role === 'parent'){
+      // this parent already has an account (e.g. an older sibling) — just link the new child
+      school.users[parentEmail].children.push(id);
+      parentMsg = ` · linked to existing parent ${parentEmail}`;
+    } else {
+      school.users[parentEmail] = {
+        password: parentPassword || 'parent123',
+        role: 'parent',
+        fullName: parentName || (name + "'s Parent"),
+        children: [id],
+      };
+      parentMsg = ` · parent login: ${parentEmail} / ${parentPassword || 'parent123'}`;
+    }
+  }
+
+  document.getElementById('newParentName').value = '';
+  document.getElementById('newParentEmail').value = '';
+  document.getElementById('newParentPassword').value = '';
+
+  showToast(`${name} enrolled — login: ${email} / student123${parentMsg}`);
+  saveDB();
   renderAdmin();
 }
 function addTeacher(){
@@ -889,6 +1117,7 @@ function addTeacher(){
   if(!name || !email){ showToast('Enter a name and email first'); return; }
   school.users[email] = { password: 'teach123', role: 'teacher', fullName: name, classes: [] };
   showToast(`${name} added — login: ${email} / teach123`);
+  saveDB();
   renderAdmin();
 }
 function markPaid(sid){
@@ -896,6 +1125,7 @@ function markPaid(sid){
   const f = school.fees[sid];
   f.paid = f.due; f.status = 'paid';
   showToast('Payment recorded');
+  saveDB();
   renderAdmin();
 }
 function addClass(){
@@ -905,6 +1135,7 @@ function addClass(){
   if(school.classes.some(c=>c.name.toLowerCase()===name.toLowerCase())){ showToast('That class already exists'); return; }
   school.classes.push({ id: 'c' + Date.now(), name });
   showToast(`${name} added`);
+  saveDB();
   renderAdmin();
 }
 function addSubject(){
@@ -914,6 +1145,7 @@ function addSubject(){
   if(school.subjects.some(s=>s.name.toLowerCase()===name.toLowerCase())){ showToast('That subject already exists'); return; }
   school.subjects.push({ id: 'sub' + Date.now(), name });
   showToast(`${name} added`);
+  saveDB();
   renderAdmin();
 }
 function assignTeacher(){
@@ -928,6 +1160,7 @@ function assignTeacher(){
   teacher.classes.push({ classId, subjectId });
   const cl = school.classes.find(c=>c.id===classId);
   showToast(`${teacher.fullName} assigned to ${cl.name}`);
+  saveDB();
   renderAdmin();
 }
 function createFeeRecord(){
@@ -939,6 +1172,7 @@ function createFeeRecord(){
   if(!term || !amount){ showToast('Enter a term and amount first'); return; }
   school.fees[studentId] = { term, year: 2026, due: amount, paid: 0, status: 'unpaid', dueDate };
   showToast('Fee record created');
+  saveDB();
   renderAdmin();
 }
 
@@ -1037,6 +1271,7 @@ function markAttendance(sid, status){
   const list = school.attendance[sid];
   const existing = list.find(a=>a.date===today);
   if(existing) existing.status = status; else list.push({date:today, status});
+  saveDB();
   renderTeacher();
   showToast('Attendance saved');
 }
@@ -1047,6 +1282,7 @@ function saveMark(sid, subjectName){
   const list = school.marks[sid];
   const existing = list.find(m=>m.subject===subjectName && m.exam==='Mid Term 1');
   if(existing) existing.score = val; else list.push({exam:'Mid Term 1', subject: subjectName, score: val, max: 100});
+  saveDB();
   showToast('Mark saved');
 }
 function postAnnouncement(){
@@ -1057,6 +1293,7 @@ function postAnnouncement(){
   if(!title){ showToast('Add a title first'); return; }
   school.announcements.unshift({ classId, title, body, date: "2026-08-23" });
   document.getElementById('annTitle').value=''; document.getElementById('annBody').value='';
+  saveDB();
   showToast('Announcement posted');
 }
 
@@ -1146,12 +1383,47 @@ function renderParent(){
   if(currentNav === 'fees'){
     setTitle('Fees', s.name);
     const f = school.fees[parentSelectedChild];
+    const balance = f ? (f.due - f.paid) : 0;
     c.innerHTML = `<div class="child-tabs">${tabs}</div><div class="panel"><div class="panel-body">
-      ${f ? `<table><tr><th>Term</th><td class="mono">${f.term}</td></tr><tr><th>Due</th><td class="mono">${f.due.toLocaleString()} RWF</td></tr><tr><th>Paid</th><td class="mono">${f.paid.toLocaleString()} RWF</td></tr><tr><th>Status</th><td><span class="badge ${f.status}">${f.status}</span></td></tr></table>` : '<div class="empty">No fee record yet.</div>'}
+      ${f ? `
+        <table><tr><th>Term</th><td class="mono">${f.term}</td></tr><tr><th>Due</th><td class="mono">${f.due.toLocaleString()} RWF</td></tr><tr><th>Paid</th><td class="mono">${f.paid.toLocaleString()} RWF</td></tr><tr><th>Balance</th><td class="mono">${balance.toLocaleString()} RWF</td></tr><tr><th>Status</th><td><span class="badge ${f.status}">${f.status}</span></td></tr></table>
+        ${f.status !== 'paid' ? `
+        <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-soft);font-weight:600;margin-bottom:10px;">Pay balance — choose a method</div>
+          <div class="pay-methods">
+            <div class="pay-method" onclick="payFee('mobile')"><span class="pay-icon">📱</span><div><div class="pay-name">Mobile Money</div><div class="pay-sub">MTN / Airtel</div></div></div>
+            <div class="pay-method" onclick="payFee('bank')"><span class="pay-icon">🏦</span><div><div class="pay-name">Bank Transfer</div><div class="pay-sub">Direct deposit</div></div></div>
+            <div class="pay-method" onclick="payFee('card')"><span class="pay-icon">💳</span><div><div class="pay-name">Card</div><div class="pay-sub">Visa / Mastercard</div></div></div>
+          </div>
+        </div>` : ''}
+      ` : '<div class="empty">No fee record yet.</div>'}
     </div></div>`;
   }
 }
+function payFee(method){
+  const school = DB.schools[state.schoolSlug];
+  const f = school.fees[parentSelectedChild];
+  if(!f) return;
+  const labels = { mobile: 'Mobile Money', bank: 'Bank Transfer', card: 'Card' };
+  f.paid = f.due;
+  f.status = 'paid';
+  saveDB();
+  showToast(`Payment of ${f.due.toLocaleString()} RWF via ${labels[method]} successful`);
+  renderParent();
+}
 function pickChild(id){ parentSelectedChild = id; renderParent(); }
+function resetAllData(){
+  if(!confirm('This clears all saved data on this device and reloads the original demo schools. Continue?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+/* Restore a saved session, if this browser has one — skips the home
+   page and drops the user straight back into their dashboard.
+   This runs last, after every function/const above it is defined. */
+if(loadDB()){
+  enterApp();
+}
 </script>
 </body>
 </html>
