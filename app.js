@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const authRoutes = require('./auth');
-const teacherRoutes = require('./routes/teacher');
+const teacherRoutes = require('./teacher');
 
 const app = express();
 app.use(express.json());
