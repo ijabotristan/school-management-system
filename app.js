@@ -5,9 +5,11 @@ const teacherRoutes = require('./teacher');
 
 const app = express();
 app.use(express.json());
+console.log('AUTH:', typeof authRoutes);
+console.log('TEACHER:', typeof teacherRoutes);
 
-app.use('/api', authRoutes);      // /api/:schoolSlug/auth/login, /api/auth/register-school
-app.use('/api', teacherRoutes);   // /api/teacher/my-classes, /api/teacher/attendance
+app.use('/api', authRoutes);
+app.use('/api', teacherRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
