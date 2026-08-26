@@ -20,8 +20,13 @@ app.use('/api', teacherRoutes);
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`SMS backend running on port ${PORT}`));
 
-module.exports = app; app.get('/', (req, res) => {
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`SMS backend running on port ${PORT}`));
+}
+
+module.exports = app;
+
+app.get('/', (req, res) => {
   res.send('School Management System API is running 🚀');
 });
